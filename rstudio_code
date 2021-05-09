@@ -1,0 +1,242 @@
+### downloading packages
+> library(rpart)
+> library(rpart.plot)
+> library(mlbench)
+> library(randomForest)
+> library(MASS)
+> library(corrplot)
+> library(nnet)
+> library(caret)
+
+### importing datasets
+> wine <- read.csv("~/Documents/wine.csv")
+> redwine <- read.csv("~/Documents/redwine.csv")
+
+### first 6 rows of data
+> head(wine)
+  fixed.acidity volatile.acidity citric.acid residual.sugar chlorides free.sulfur.dioxide
+1           7.0             0.27        0.36           20.7     0.045                  45
+2           6.3             0.30        0.34            1.6     0.049                  14
+3           8.1             0.28        0.40            6.9     0.050                  30
+4           7.2             0.23        0.32            8.5     0.058                  47
+5           7.2             0.23        0.32            8.5     0.058                  47
+6           8.1             0.28        0.40            6.9     0.050                  30
+  total.sulfur.dioxide density   pH sulphates alcohol quality
+1                  170  1.0010 3.00      0.45     8.8       6
+2                  132  0.9940 3.30      0.49     9.5       6
+3                   97  0.9951 3.26      0.44    10.1       6
+4                  186  0.9956 3.19      0.40     9.9       6
+5                  186  0.9956 3.19      0.40     9.9       6
+6                   97  0.9951 3.26      0.44    10.1       6
+> head(redwine)
+  fixed.acidity volatile.acidity citric.acid residual.sugar chlorides free.sulfur.dioxide
+1           7.4             0.70        0.00            1.9     0.076                  11
+2           7.8             0.88        0.00            2.6     0.098                  25
+3           7.8             0.76        0.04            2.3     0.092                  15
+4          11.2             0.28        0.56            1.9     0.075                  17
+5           7.4             0.70        0.00            1.9     0.076                  11
+6           7.4             0.66        0.00            1.8     0.075                  13
+  total.sulfur.dioxide density   pH sulphates alcohol quality
+1                   34  0.9978 3.51      0.56     9.4       5
+2                   67  0.9968 3.20      0.68     9.8       5
+3                   54  0.9970 3.26      0.65     9.8       5
+4                   60  0.9980 3.16      0.58     9.8       6
+5                   34  0.9978 3.51      0.56     9.4       5
+6                   40  0.9978 3.51      0.56     9.4       5
+
+### dimensions of datasets
+> dim(wine)
+[1] 4898   12
+> dim(redwine)
+[1] 1599   12
+
+###column names of datset
+> colnames(wine)
+ [1] "fixed.acidity"        "volatile.acidity"     "citric.acid"          "residual.sugar"      
+ [5] "chlorides"            "free.sulfur.dioxide"  "total.sulfur.dioxide" "density"             
+ [9] "pH"                   "sulphates"            "alcohol"              "quality"             
+> colnames(redwine)
+ [1] "fixed.acidity"        "volatile.acidity"     "citric.acid"          "residual.sugar"      
+ [5] "chlorides"            "free.sulfur.dioxide"  "total.sulfur.dioxide" "density"             
+ [9] "pH"                   "sulphates"            "alcohol"              "quality"  
+ 
+ ### summary of datasets
+> summary(wine)
+ fixed.acidity    volatile.acidity  citric.acid     residual.sugar     chlorides       free.sulfur.dioxide
+ Min.   : 3.800   Min.   :0.0800   Min.   :0.0000   Min.   : 0.600   Min.   :0.00900   Min.   :  2.00     
+ 1st Qu.: 6.300   1st Qu.:0.2100   1st Qu.:0.2700   1st Qu.: 1.700   1st Qu.:0.03600   1st Qu.: 23.00     
+ Median : 6.800   Median :0.2600   Median :0.3200   Median : 5.200   Median :0.04300   Median : 34.00     
+ Mean   : 6.855   Mean   :0.2782   Mean   :0.3342   Mean   : 6.391   Mean   :0.04577   Mean   : 35.31     
+ 3rd Qu.: 7.300   3rd Qu.:0.3200   3rd Qu.:0.3900   3rd Qu.: 9.900   3rd Qu.:0.05000   3rd Qu.: 46.00     
+ Max.   :14.200   Max.   :1.1000   Max.   :1.6600   Max.   :65.800   Max.   :0.34600   Max.   :289.00     
+ total.sulfur.dioxide    density             pH          sulphates         alcohol         quality     
+ Min.   :  9.0        Min.   :0.9871   Min.   :2.720   Min.   :0.2200   Min.   : 8.00   Min.   :3.000  
+ 1st Qu.:108.0        1st Qu.:0.9917   1st Qu.:3.090   1st Qu.:0.4100   1st Qu.: 9.50   1st Qu.:5.000  
+ Median :134.0        Median :0.9937   Median :3.180   Median :0.4700   Median :10.40   Median :6.000  
+ Mean   :138.4        Mean   :0.9940   Mean   :3.188   Mean   :0.4898   Mean   :10.51   Mean   :5.878  
+ 3rd Qu.:167.0        3rd Qu.:0.9961   3rd Qu.:3.280   3rd Qu.:0.5500   3rd Qu.:11.40   3rd Qu.:6.000  
+ Max.   :440.0        Max.   :1.0390   Max.   :3.820   Max.   :1.0800   Max.   :14.20   Max.   :9.000  
+> summary(redwine)
+ fixed.acidity   volatile.acidity  citric.acid    residual.sugar     chlorides       free.sulfur.dioxide
+ Min.   : 4.60   Min.   :0.1200   Min.   :0.000   Min.   : 0.900   Min.   :0.01200   Min.   : 1.00      
+ 1st Qu.: 7.10   1st Qu.:0.3900   1st Qu.:0.090   1st Qu.: 1.900   1st Qu.:0.07000   1st Qu.: 7.00      
+ Median : 7.90   Median :0.5200   Median :0.260   Median : 2.200   Median :0.07900   Median :14.00      
+ Mean   : 8.32   Mean   :0.5278   Mean   :0.271   Mean   : 2.539   Mean   :0.08747   Mean   :15.87      
+ 3rd Qu.: 9.20   3rd Qu.:0.6400   3rd Qu.:0.420   3rd Qu.: 2.600   3rd Qu.:0.09000   3rd Qu.:21.00      
+ Max.   :15.90   Max.   :1.5800   Max.   :1.000   Max.   :15.500   Max.   :0.61100   Max.   :72.00      
+ total.sulfur.dioxide    density             pH          sulphates         alcohol         quality     
+ Min.   :  6.00       Min.   :0.9901   Min.   :2.740   Min.   :0.3300   Min.   : 8.40   Min.   :3.000  
+ 1st Qu.: 22.00       1st Qu.:0.9956   1st Qu.:3.210   1st Qu.:0.5500   1st Qu.: 9.50   1st Qu.:5.000  
+ Median : 38.00       Median :0.9968   Median :3.310   Median :0.6200   Median :10.20   Median :6.000  
+ Mean   : 46.47       Mean   :0.9967   Mean   :3.311   Mean   :0.6581   Mean   :10.42   Mean   :5.636  
+ 3rd Qu.: 62.00       3rd Qu.:0.9978   3rd Qu.:3.400   3rd Qu.:0.7300   3rd Qu.:11.10   3rd Qu.:6.000  
+ Max.   :289.00       Max.   :1.0037   Max.   :4.010   Max.   :2.0000   Max.   :14.90   Max.   :8.000 
+ 
+ ### table of wine quality 
+> table(wine$quality)
+
+   3    4    5    6    7    8    9 
+  20  163 1457 2198  880  175    5 
+  
+> table(redwine$quality)
+
+  3   4   5   6   7   8 
+ 10  53 681 638 199  18 
+ 
+### quality distributions
+> ggplot(redwine,aes(quality)) + geom_histogram(stat="count") + xlab("Quality of red wines") + ylab("Number of red wines")
+Warning message:
+Ignoring unknown parameters: binwidth, bins, pad 
+> ggplot(wine,aes(quality)) + geom_histogram(stat="count") + xlab("Quality of white wines") + ylab("Number of white wines")
+Warning message:
+Ignoring unknown parameters: binwidth, bins, pad 
+
+### correlation plots
+> corrplot(cor(redwine))
+> corrplot(cor(wine))
+
+### adding "taste" to dataset as a factor
+> redwine$taste <- ifelse(redwine$quality < 6, 'bad', 'good')
+> redwine$taste[redwine$quality == 6] <- 'normal'
+> redwine$taste <- as.factor(redwine$taste)
+> table(redwine$taste)
+
+   bad   good normal 
+   744    217    638 
+> wine$taste <- ifelse(wine$quality < 6, 'bad', 'good')
+> wine$taste[wine$quality == 6] <- 'normal'
+> wine$taste <- as.factor(wine$taste)
+> table(wine$taste)
+
+   bad   good normal 
+  1640   1060   2198 
+  
+### training and testing data for red wine
+> subset <- sample(nrow(redwine), nrow(redwine) * 0.8)
+> train = redwine[subset, ]
+> test = redwine[-subset, ]
+
+### multinomial logistic regression model for red wine
+> model1red <- multinom(taste ~ fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol, data = train)
+# weights:  39 (24 variable)
+initial  value 1405.125117 
+iter  10 value 1129.436311
+iter  20 value 979.177637
+iter  30 value 976.792951
+iter  40 value 976.434247
+iter  50 value 974.178600
+iter  50 value 974.178600
+final  value 974.178600 
+converged
+> model1red.pred <- predict(model1red, test, type="class")
+> table(model1red.pred, test$taste)
+              
+model1red.pred bad good normal
+        bad    112    2     37
+        good     4   20     17
+        normal  37   19     72
+> (112 + 20 + 72) / nrow(test)
+[1] 0.63125
+
+### decision tree model for red wine
+> model2red = rpart(taste ~ fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol, data=train, method="class")
+> model2red.pred <- predict(model2red, test, type="class")
+> table(model2red.pred, test$taste)
+              
+model2red.pred bad good normal
+        bad    113    2     35
+        good     1   16     16
+        normal  39   23     75
+> (113 + 16 + 75) / nrow(test)
+[1] 0.621875
+
+### random forest model for red wine
+> model3red = randomForest(taste ~ fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol, data=train)
+> model3.pred <- predict(model3red, test, type="class")
+> table(model3red.pred, test$taste)
+              
+model3red.pred bad good normal
+        bad     78   14     59
+        good    19    7     14
+        normal  56   20     53
+> (78 + 7 + 53)/ nrow(test)
+[1] 0.74375
+
+### training and testing data for white wine
+> subset <- sample(nrow(wine), nrow(wine) * 0.8)
+> train = wine[subset, ]
+> test = wine[-subset, ]
+
+### multinomial logistic regression model for white wine
+> model1 <- multinom(taste ~ fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol, data = train)
+# weights:  39 (24 variable)
+initial  value 4304.362947 
+iter  10 value 3891.028017
+iter  20 value 3441.435802
+iter  30 value 3435.589299
+iter  40 value 3420.380786
+iter  50 value 3419.089735
+iter  60 value 3418.766478
+iter  70 value 3418.481419
+iter  80 value 3418.401026
+iter  90 value 3414.033223
+iter 100 value 3412.348201
+final  value 3412.348201 
+stopped after 100 iterations
+> model1.pred <- predict(model1, test, type="class")
+> table(model1.pred, test$taste)
+           
+model1.pred bad good normal
+     bad    202   14     92
+     good     6   73     46
+     normal 136  116    295
+> (197 + 68 + 309) / nrow(test)
+[1] 0.5857143
+
+### decision tree model for white wine
+> model2 = rpart(taste ~ fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol, data=train, method="class")
+> prp(model2, digits = 4, extra = 1)
+> prp(model2red, digits = 4, extra = 1)
+> table(model2, test$taste)
+Error in order(y) : unimplemented type 'list' in 'orderVector1'
+> model2.pred <- predict(model2, test, type="class")
+> table(model2.pred, test$taste)
+           
+model2.pred bad good normal
+     bad    119    3     52
+     good     6   86     64
+     normal 219  114    317
+> (182 + 39 + 329)/ nrow(test)
+[1] 0.5612245
+
+### random forest model for white wine
+> model3 = randomForest(taste ~ fixed.acidity+volatile.acidity+citric.acid+residual.sugar+chlorides+free.sulfur.dioxide+total.sulfur.dioxide+density+pH+sulphates+alcohol, data=train)
+> model3.pred <- predict(model3, test, type="class")
+> table(model3.pred, test$taste)
+           
+model3.pred bad good normal
+     bad    249    3     60
+     good     7  129     47
+     normal  88   71    326
+> (241 + 132 + 342)/ nrow(test)
+[1] 0.7295918
